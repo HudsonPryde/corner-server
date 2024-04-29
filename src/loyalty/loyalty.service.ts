@@ -179,4 +179,34 @@ export class LoyaltyService {
       return e;
     }
   }
+
+  async createReward(id: string, reward_id: string) {
+    try {
+      // get loyalty account and seller
+      const loyalty = await this.LoyaltyRepository.findOneBy({
+        id,
+      });
+      const seller = await this.SellersRepository.findOneBy({
+        id: loyalty.seller_id,
+      });
+      const Square = new Client({
+        bearerAuthCredentials: {
+          accessToken: seller.token,
+        },
+        environment: Environment.Sandbox,
+      });
+      // create the reward
+      const res = await Square.loyaltyApi.createLoyaltyReward({
+        reward: {
+          rewardTierId: reward_id,
+          loyaltyAccountId: id,
+        },
+        idempotencyKey: randomUUID(),
+      });
+      return res.result;
+    } catch (e) {
+      console.error(e);
+      return e;
+    }
+  }
 }

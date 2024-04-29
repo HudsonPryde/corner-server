@@ -24,7 +24,7 @@ export class LoyaltyController {
   }
 
   @Get(":id/program")
-  async getLoyaltyProgram(@Param() params: any) {
+  async getLoyaltyProgram(@Param() params: { id: string }) {
     return this.loyaltyService.getLoyaltyProgram(params.id);
   }
   @Post("/accrue")
@@ -34,5 +34,9 @@ export class LoyaltyController {
   @Patch()
   async updateLoyalty(@Body() loyalty: any) {
     return this.loyaltyService.updateLoyalty(loyalty);
+  }
+  @Post(":id/create/:reward_id")
+  async redeemReward(@Param() params: { id: string; reward_id: string }) {
+    return this.loyaltyService.createReward(params.id, params.reward_id);
   }
 }
